@@ -20,10 +20,6 @@ def get_ride_status_and_user_id(update, context):
     query = update.callback_query
     ride_type = query.data
 
-    # saving user data
-    context.user_data['user_first_name'] = update.effective_user.first_name
-    context.user_data['user_last_name'] = update.effective_user.last_name
-
     if ride_type is ONE_TIME:
         context.user_data['ride_type'] = 'ONE_TIME'
         text = 'Введіть час відправлення у форматі HH.MM:'
@@ -77,8 +73,6 @@ def get_ride_type_or_start_point(update, context):
         logging.debug('entered into if update.message.location')
         location = update.message.location
         latitude, longitude = location.latitude, location.longitude
-        user_location = Location(longitude=longitude, latitude=latitude)
-
 
         # adding vars to user_data
         context.user_data['start_latitude'] = latitude
@@ -87,14 +81,15 @@ def get_ride_type_or_start_point(update, context):
         text = f'Координати місця вашого відправлення: {context.user_data["start_latitude"]}, ' \
                f'{context.user_data["start_longitude"]}'
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=text)
-        context.bot.send_location(chat_id=update.effective_message.chat_id, location=user_location)
+        context.bot.send_location(chat_id=update.effective_message.chat_id, location=location)
 
     context.bot.send_message(chat_id=update.effective_message.chat_id, text='А тепер вкажіть, куди ви прямуєте:')
     return GET_FINISH_POINT
 
 
 def get_finish_point_and_send_requests(update, context):
-    latitude, longitude = update.message.text.split(', ')
+    location = update.message.location
+    latitude, longitude = location.latitude, location.longitude
 
     # adding vars to user_data
     context.user_data['finish_latitude'] = latitude

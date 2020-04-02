@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from adding_ride_funcs_2 import add_ride, get_ride_status_and_user_id, get_departure_time, get_departure_date, \
     get_ride_type_or_start_point, get_finish_point_and_send_requests
 from other_funcs import start, cancel
-from register_funcs import register, get_user_status
+from register_funcs import register, get_user_status, get_user_phone_and_name, delete_or_stop
 from view_details_funcs import get_several_details_messages
 from vars_module import *
 
@@ -22,6 +22,8 @@ def main():
                       CommandHandler('add_ride', add_ride, pass_user_data=True)],
         states={
             GET_USER_STATUS: [CallbackQueryHandler(get_user_status, pattern=f'^{str(DRIVER)}$|^{str(DOCTOR)}$')],
+            CHOSE_DELETE_USER_DATA: [CallbackQueryHandler(delete_or_stop, pattern=f'^{str(DELETE_DATA)}$|^{str(STOP_ACTION)}$')],
+            GET_USER_CONTACT: [MessageHandler(Filters.contact, get_user_phone_and_name)],
             GET_RIDE_STATUS: [CallbackQueryHandler(get_ride_status_and_user_id, pattern=f'^{str(ONE_TIME)}$|^{str(REGULAR)}$')],
             GET_DEPARTURE_TIME: [MessageHandler(Filters.text, get_departure_time, pass_user_data=True)],
             GET_DEPARTURE_DATE: [MessageHandler(Filters.text, get_departure_date, pass_user_data=True)],

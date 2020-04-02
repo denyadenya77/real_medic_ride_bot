@@ -25,8 +25,8 @@ def main():
             GET_RIDE_STATUS: [CallbackQueryHandler(get_ride_status_and_user_id, pattern=f'^{str(ONE_TIME)}$|^{str(REGULAR)}$')],
             GET_DEPARTURE_TIME: [MessageHandler(Filters.text, get_departure_time, pass_user_data=True)],
             GET_DEPARTURE_DATE: [MessageHandler(Filters.text, get_departure_date, pass_user_data=True)],
-            GET_START_POINT: [MessageHandler(Filters.text, get_ride_type_or_start_point, pass_user_data=True)],
-            GET_FINISH_POINT: [MessageHandler(Filters.text, get_finish_point_and_send_requests, pass_user_data=True)],
+            GET_START_POINT: [MessageHandler(Filters.location, get_ride_type_or_start_point, pass_user_data=True)],
+            GET_FINISH_POINT: [MessageHandler(Filters.location, get_finish_point_and_send_requests, pass_user_data=True)],
             # ниже - conversation для получения инфы о совпадении
             GET_RESULT_LIST: [CallbackQueryHandler(get_several_details_messages,
                                                    pattern=f'^{str(GET_DETAILS)}$',

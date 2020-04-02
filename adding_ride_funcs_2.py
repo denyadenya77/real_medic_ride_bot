@@ -3,6 +3,7 @@ from telegram.ext import ConversationHandler
 from vars_module import *
 
 
+
 def add_ride(update, context):
     keyboard = [[InlineKeyboardButton("Однократна поїздка", callback_data=str(ONE_TIME))],
                 [InlineKeyboardButton("Регулярна поїздка", callback_data=str(REGULAR))]]
@@ -71,14 +72,22 @@ def get_ride_type_or_start_point(update, context):
         text = f'Тип вашої поїздки: {context.user_data["ride_type"]}'
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=text)
     else:
-        if update.message.text:
-            latitude, longitude = update.message.text.split(', ')
-            user_location = Location(longitude=longitude, latitude=latitude)
-        # тут пытаемся принять объект геолокации
-        else:
+        if update.message.location:
             location = update.message.location
             latitude, longitude = location.latitude, location.longitude
             user_location = Location(longitude=longitude, latitude=latitude)
+        else:
+            latitude, longitude = update.message.text.split(', ')
+            user_location = Location(longitude=longitude, latitude=latitude)
+
+        # if update.message.text:
+        #     latitude, longitude = update.message.text.split(', ')
+        #     user_location = Location(longitude=longitude, latitude=latitude)
+        # # тут пытаемся принять объект геолокации
+        # else:
+        #     location = update.message.location
+        #     latitude, longitude = location.latitude, location.longitude
+        #     user_location = Location(longitude=longitude, latitude=latitude)
 
         # adding vars to user_data
         context.user_data['start_latitude'] = latitude

@@ -25,6 +25,6 @@ def get_several_details_messages(update, context):
         context.bot.send_location(chat_id=update.effective_message.chat_id, location=location)
         context.bot.send_contact(update.effective_message.chat_id, contact=contact)
 
-    result_list = context.user_data.clear()
+    context.user_data.clear()
 
     return ConversationHandler.END

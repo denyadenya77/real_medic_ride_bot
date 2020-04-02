@@ -1,7 +1,9 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Location
 from telegram.ext import ConversationHandler
 from vars_module import *
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 
 
 def add_ride(update, context):
@@ -61,7 +63,9 @@ def get_departure_date(update, context):
 
 
 def get_ride_type_or_start_point(update, context):
+    logging.debug('get to get_ride_type_or_start_point')
     if update.callback_query:
+        logging.debug('entered into if update.callback_query')
         query = update.callback_query
         ride_type = query.data
         # adding vars to user_data
@@ -72,11 +76,14 @@ def get_ride_type_or_start_point(update, context):
         text = f'Тип вашої поїздки: {context.user_data["ride_type"]}'
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=text)
     else:
+        logging.debug('entered into if update.callback_query -- else')
         if update.message.location:
+            logging.debug('entered into if update.message.location')
             location = update.message.location
             latitude, longitude = location.latitude, location.longitude
             user_location = Location(longitude=longitude, latitude=latitude)
         else:
+            logging.debug('entered into if update.message.location -- else')
             latitude, longitude = update.message.text.split(', ')
             user_location = Location(longitude=longitude, latitude=latitude)
 

@@ -40,7 +40,7 @@ def main():
 
     # Getting mode, so we could define run function for local and Heroku setup
     mode = os.getenv("MODE")
-    token = os.getenv("TOKEN")
+    token = os.getenv("BOT_TOKEN")
     if mode == "dev":
         updater.start_polling()
     elif mode == "prod":

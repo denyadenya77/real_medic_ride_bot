@@ -15,7 +15,7 @@ def register(update, context):
         update.message.reply_text(text=text, reply_markup=keyboard)
         return GET_USER_STATUS
     else:
-        text = 'Ви вже авторизовані в системі!\n' \
+        text = 'Ви вже авторизовані в системі!\n\n' \
                'Натисніть "ВИДАЛИТИ", якщо хочете видалити всю інформацію про себе та свої маршрути.\n' \
                'Натисніть "ВІДМІНИТИ", щоб відмінити дію.\n\n' \
                'БУДЬТЕ ОБЕРЕЖНІ! Видалееі дані неможливо відновити!'
@@ -44,7 +44,7 @@ def get_user_status(update, context):
     custom_keyboard = [[contact_keyboard]]
     reply_markup = ReplyKeyboardMarkup(custom_keyboard, resize_keyboard=True, one_time_keyboard=True)
     context.bot.send_message(update.effective_message.chat_id,
-                             f'Натисніть копку, аби зазначити номер телефону',
+                             f'Натисніть копку, аби зазначити номер телефону.',
                              reply_markup=reply_markup)
 
     return GET_USER_CONTACT
@@ -56,11 +56,11 @@ def get_user_phone_and_name(update, context):
     last_name = contact.last_name
     phone = contact.phone_number
 
-    update.effective_message.reply_text(f'Вітаємо! Тепер ви зарєєстровні у системі!\n'
+    update.effective_message.reply_text(f'Вітаємо! Тепер ви зарєєстровні у системі!\n\n'
                                         f'Ці дані будуть завантажені на сервер:\n'
                                         f'first_name: {first_name}\n'
                                         f'last_name: {last_name}\n'
-                                        f'phone: {phone}', reply_markup=ReplyKeyboardRemove())
+                                        f'phone: +{phone}', reply_markup=ReplyKeyboardRemove())
 
     # тут отпрвляем POST и сохраняем авторизацию локально
     context.chat_data['authorized'] = True

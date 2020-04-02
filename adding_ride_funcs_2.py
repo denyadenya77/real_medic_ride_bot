@@ -28,7 +28,7 @@ def get_ride_status_and_user_id(update, context):
         text = 'Надішліть координати старту. \n51.6680, 32.6546'
 
     update.callback_query.answer()
-    update.callback_query.edit_message_text(f'Тип вашої поїздки: {context.user_data["ride_type"]}\n{text}')
+    update.callback_query.edit_message_text(f'Тип вашої поїздки: {context.user_data["ride_type"]}\n\n{text}')
 
     if ride_type is ONE_TIME:
         return GET_DEPARTURE_TIME
@@ -42,7 +42,7 @@ def get_departure_time(update, context):
     # adding vars to user_data
     context.user_data['time_of_departure'] = time_of_departure
 
-    update.message.reply_text(f'Час вашого відправлення:{context.user_data["time_of_departure"]}\n'
+    update.message.reply_text(f'Час вашого відправлення:{context.user_data["time_of_departure"]}\n\n'
                               f'Будь ласка, тепер введіть дату поїздки у форматі DD.MM.YYYY')
     return GET_DEPARTURE_DATE
 
@@ -53,8 +53,8 @@ def get_departure_date(update, context):
     # adding vars to user_data
     context.user_data['date_of_departure'] = date_of_departure
 
-    update.message.reply_text(f'Дата вашого відправлення: {context.user_data["date_of_departure"]}\n'
-                              f'Тепер вкажіть координати вашого старту:\n\nПриклад: 51.6680, 32.6546')
+    update.message.reply_text(f'Дата вашого відправлення: {context.user_data["date_of_departure"]}.\n\n'
+                              f'Тепер локацыю місця вашого відправлення:')
     return GET_START_POINT
 
 
@@ -70,18 +70,12 @@ def get_ride_type_or_start_point(update, context):
         text = f'Тип вашої поїздки: {context.user_data["ride_type"]}'
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=text)
     else:
-        logging.debug('entered into if update.message.location')
         location = update.message.location
         latitude, longitude = location.latitude, location.longitude
 
         # adding vars to user_data
         context.user_data['start_latitude'] = latitude
         context.user_data['start_longitude'] = longitude
-
-        text = f'Координати місця вашого відправлення: {context.user_data["start_latitude"]}, ' \
-               f'{context.user_data["start_longitude"]}'
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=text)
-        context.bot.send_location(chat_id=update.effective_message.chat_id, location=location)
 
     context.bot.send_message(chat_id=update.effective_message.chat_id, text='А тепер вкажіть, куди ви прямуєте:')
     return GET_FINISH_POINT

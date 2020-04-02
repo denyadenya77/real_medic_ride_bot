@@ -25,6 +25,10 @@ def get_several_details_messages(update, context):
         context.bot.send_location(chat_id=update.effective_message.chat_id, location=location)
         context.bot.send_contact(update.effective_message.chat_id, contact=contact)
 
+    context.bot.send_message(update.effective_message.chat_id, "Перегляньте місця призначення. Якщо вам по дорозі, "
+                                                               "будь ласка, зв'яжіться з медиком, аби домовитися про "
+                                                               "поїздку!")
+
     context.user_data.clear()
 
     return ConversationHandler.END

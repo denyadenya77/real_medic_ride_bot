@@ -90,17 +90,19 @@ def get_finish_point_and_send_requests(update, context):
     context.user_data['finish_longitude'] = longitude
 
     if context.user_data['ride_type'] is 'ONE_TIME':
-        text = f'Деталі поїздки, що будуть відправлені на сервер:\n'
-        f'Тип поїдки: {context.user_data["ride_type"]}.'
-        f'Час відправлення: {context.user_data["time_of_departure"]}.\n'
-        f'Дата відправлення: {context.user_data["date_of_departure"]}.\n'
-        f'Координати старту: {context.user_data["start_latitude"]}, {context.user_data["start_longitude"]}.\n'
-        f'Координати фінішу: {context.user_data["finish_latitude"]}, {context.user_data["finish_longitude"]}\n'
+        text = f'Деталі поїздки, що будуть відправлені на сервер:\n' \
+               f'Чат-айді: {update.effective_message.chat_id}.\n' \
+               f'Тип поїдки: {context.user_data["ride_type"]}.\n' \
+               f'Час відправлення: {context.user_data["time_of_departure"]}.\n' \
+               f'Дата відправлення: {context.user_data["date_of_departure"]}.\n' \
+               f'Координати старту: {context.user_data["start_latitude"]}, {context.user_data["start_longitude"]}.\n' \
+               f'Координати фінішу: {context.user_data["finish_latitude"]}, {context.user_data["finish_longitude"]}\n'
     elif context.user_data['ride_type'] is 'REGULAR':
-        text = f'Деталі поїздки, що будуть відправлені на сервер:\n'
-        f'Тип поїдки: {context.user_data["ride_type"]}.'
-        f'Координати старту: {context.user_data["start_latitude"]}, {context.user_data["start_longitude"]}.\n'
-        f'Координати фінішу: {context.user_data["finish_latitude"]}, {context.user_data["finish_longitude"]}\n'
+        text = f'Деталі поїздки, що будуть відправлені на сервер:\n' \
+               f'Чат-айді: {update.effective_message.chat_id}' \
+               f'Тип поїдки: {context.user_data["ride_type"]}.' \
+               f'Координати старту: {context.user_data["start_latitude"]}, {context.user_data["start_longitude"]}.\n' \
+               f'Координати фінішу: {context.user_data["finish_latitude"]}, {context.user_data["finish_longitude"]}\n'
 
     # отправляем собраные данные -- POST
     # вызываем метод для получения -- GET
@@ -115,7 +117,7 @@ def get_db_response(update, context):
             'user_last_name': 'Kuznetsov',
             'user_phone_number': '+380997683348',
             'user_status': 'medic',
-            'user_chat_id': '400427515',
+            # 'user_chat_id': '400427515',
             'time_of_departure': '08.00',
             'date_of_departure': '20.20.2020',
             'finish_point': {
@@ -128,7 +130,7 @@ def get_db_response(update, context):
             'user_last_name': 'User',
             'user_phone_number': '+380997683348',
             'user_status': 'medic',
-            'user_chat_id': '400427515',
+            # 'user_chat_id': '400427515',
             'time_of_departure': '21.00',
             'date_of_departure': '20.20.3333',
             'finish_point': {

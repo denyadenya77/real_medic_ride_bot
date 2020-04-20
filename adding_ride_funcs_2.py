@@ -1,9 +1,6 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Location
 from telegram.ext import ConversationHandler
 from vars_module import *
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 def add_ride(update, context):
@@ -27,8 +24,7 @@ def get_ride_status_and_user_id(update, context):
         context.user_data['ride_type'] = 'REGULAR'
         text = 'Надішліть координати старту. \n51.6680, 32.6546'
 
-    update.callback_query.answer()
-    update.callback_query.edit_message_text(f'Тип вашої поїздки: {context.user_data["ride_type"]}\n\n{text}')
+    update.effective_message.reply_text(f'Тип вашої поїздки: {context.user_data["ride_type"]}\n\n{text}')
 
     if ride_type is ONE_TIME:
         return GET_DEPARTURE_TIME
@@ -88,16 +84,17 @@ def get_finish_point_and_send_requests(update, context):
     # adding vars to user_data
     context.user_data['finish_latitude'] = latitude
     context.user_data['finish_longitude'] = longitude
+    context.user_data['telegram_id'] = update.effective_message.chat_id
 
-    if context.user_data['ride_type'] is 'ONE_TIME':
+    if context.user_data['ride_type'] == 'ONE_TIME':
         text = f'Деталі поїздки, що будуть відправлені на сервер:\n' \
-               f'Чат-айді: {update.effective_message.chat_id}.\n' \
+               f'Чат-айді: {context.user_data["telegram_id"]}.\n' \
                f'Тип поїдки: {context.user_data["ride_type"]}.\n' \
                f'Час відправлення: {context.user_data["time_of_departure"]}.\n' \
                f'Дата відправлення: {context.user_data["date_of_departure"]}.\n' \
                f'Координати старту: {context.user_data["start_latitude"]}, {context.user_data["start_longitude"]}.\n' \
                f'Координати фінішу: {context.user_data["finish_latitude"]}, {context.user_data["finish_longitude"]}\n'
-    elif context.user_data['ride_type'] is 'REGULAR':
+    elif context.user_data['ride_type'] == 'REGULAR':
         text = f'Деталі поїздки, що будуть відправлені на сервер:\n' \
                f'Чат-айді: {update.effective_message.chat_id}' \
                f'Тип поїдки: {context.user_data["ride_type"]}.' \
@@ -148,7 +145,7 @@ def get_db_response(update, context):
     context.user_data['response'] = response
 
     if len(context.user_data['response']['result_list']):
-        if context.user_data['response']['result_list'][1]['user_status'] is 'medic':
+        if context.user_data['response']['result_list'][1]['user_status'] == 'medic':
             keyboard = [[InlineKeyboardButton("Деталі", callback_data=str(GET_DETAILS))]]
             reply_markup = InlineKeyboardMarkup(keyboard)
             update.message.reply_text('Ми знайшли медиків поряд з місцем вашого відправлення!',

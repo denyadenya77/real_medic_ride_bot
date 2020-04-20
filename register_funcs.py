@@ -2,6 +2,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
     ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 from vars_module import *
+from registration_requests import send_registration_request, send_user_deletion_request
 
 
 def register(update, context):
@@ -36,6 +37,8 @@ def get_user_status(update, context):
     else:
         user_type = 'doctor'
 
+    context.user_data['user_type'] = user_type
+
     text = f'Тепер ви наш {user_type}!'
     update.callback_query.answer()
     update.callback_query.edit_message_text(text)
@@ -55,16 +58,23 @@ def get_user_phone_and_name(update, context):
     first_name = contact.first_name
     last_name = contact.last_name
     phone = contact.phone_number
+    user_type = context.user_data['user_type']
+    user_telegram_id = update.effective_user.id
 
-    update.effective_message.reply_text(f'Вітаємо! Тепер ви зарєєстровні у системі!\n\n'
-                                        f'Ці дані будуть завантажені на сервер:\n'
-                                        f'first_name: {first_name}\n'
-                                        f'last_name: {last_name}\n'
-                                        f'phone: +{phone}', reply_markup=ReplyKeyboardRemove())
+    response = send_registration_request(telegram_id=user_telegram_id,
+                                         user_type=user_type,
+                                         first_name=first_name,
+                                         last_name=last_name,
+                                         phone_number=phone)
 
-    # тут отпрвляем POST и сохраняем авторизацию локально
-    context.chat_data['authorized'] = True
-
+    if response.status_code == 201:
+        context.chat_data['authorized'] = True
+        update.effective_message.reply_text(f'Вітаємо! Тепер ви зарєєстровні у системі!',
+                                            reply_markup=ReplyKeyboardRemove())
+    else:
+        update.effective_message.reply_text('Случилась какая-то ошибка. Попробуйте еще раз.',
+                                            reply_markup=ReplyKeyboardRemove())
+    context.user_data.clear()
     return ConversationHandler.END
 
 
@@ -72,11 +82,15 @@ def delete_or_stop(update, context):
     action = update.callback_query.data
 
     if action is DELETE_DATA:
-        # отправляем запрос на удаление данных с сервера
-        text ='Ваші дані видалено з системи.\n' \
-              'Ви можете зареєстнуватися знову обрав команду /register'
-        context.chat_data['authorized'] = False
 
+        response = send_user_deletion_request(telegram_id=update.effective_user.id)
+
+        if response.status_code == 200:
+            text = 'Ваші дані видалено з системи.\n' \
+                   'Ви можете зареєстнуватися знову обрав команду /register'
+            context.chat_data['authorized'] = False
+        else:
+            text = 'Случилась какая-то ошибка. Попробуйте еще раз.'
     else:
         text = 'Дякуємо, що залилаєтесь з нами!'
 

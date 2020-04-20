@@ -1,6 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Location
 from telegram.ext import ConversationHandler
 from vars_module import *
+from route_requests import create_route_request, get_similar_routes_request
 
 
 def add_ride(update, context):
@@ -86,66 +87,55 @@ def get_finish_point_and_send_requests(update, context):
     context.user_data['finish_longitude'] = longitude
     context.user_data['telegram_id'] = update.effective_message.chat_id
 
+    response = None
     if context.user_data['ride_type'] == 'ONE_TIME':
-        text = f'Деталі поїздки, що будуть відправлені на сервер:\n' \
-               f'Чат-айді: {context.user_data["telegram_id"]}.\n' \
-               f'Тип поїдки: {context.user_data["ride_type"]}.\n' \
-               f'Час відправлення: {context.user_data["time_of_departure"]}.\n' \
-               f'Дата відправлення: {context.user_data["date_of_departure"]}.\n' \
-               f'Координати старту: {context.user_data["start_latitude"]}, {context.user_data["start_longitude"]}.\n' \
-               f'Координати фінішу: {context.user_data["finish_latitude"]}, {context.user_data["finish_longitude"]}\n'
+        response = create_route_request(telegram_id=context.user_data['telegram_id'],
+                                        time_of_departure=context.user_data['time_of_departure'],
+                                        date_of_departure=context.user_data['date_of_departure'],
+                                        start_latitude=context.user_data['start_latitude'],
+                                        start_longitude=context.user_data['start_longitude'],
+                                        finish_latitude=context.user_data["finish_latitude"],
+                                        finish_longitude=context.user_data["finish_longitude"])
     elif context.user_data['ride_type'] == 'REGULAR':
-        text = f'Деталі поїздки, що будуть відправлені на сервер:\n' \
-               f'Чат-айді: {update.effective_message.chat_id}' \
-               f'Тип поїдки: {context.user_data["ride_type"]}.' \
-               f'Координати старту: {context.user_data["start_latitude"]}, {context.user_data["start_longitude"]}.\n' \
-               f'Координати фінішу: {context.user_data["finish_latitude"]}, {context.user_data["finish_longitude"]}\n'
+        response = create_route_request(telegram_id=context.user_data['telegram_id'],
+                                        start_latitude=context.user_data['start_latitude'],
+                                        start_longitude=context.user_data['start_longitude'],
+                                        finish_latitude=context.user_data["finish_latitude"],
+                                        finish_longitude=context.user_data["finish_longitude"])
 
-    # отправляем собраные данные -- POST
-    # вызываем метод для получения -- GET
+    if response.status_code == 201:
+        update.effective_message.reply_text('Маршрут успешно добален в базу данных.')
+    else:
+        update.effective_message.reply_text('Произошла ошибка. Попробуйте внести маршрут в базу позже.')
+
     return get_db_response(update, context)
 
 
 def get_db_response(update, context):
 
-    dummy_data = {'result_list': {
-        1: {
-            'user_first_name': 'Denis',
-            'user_last_name': 'Kuznetsov',
-            'user_phone_number': '+380997683348',
-            'user_status': 'medic',
-            # 'user_chat_id': '400427515',
-            'time_of_departure': '08.00',
-            'date_of_departure': '20.20.2020',
-            'finish_point': {
-                'latitude': '47.8154243',
-                'longitude': '35.1920189'
-            }
-        },
-        2: {
-            'user_first_name': 'Some',
-            'user_last_name': 'User',
-            'user_phone_number': '+380997683348',
-            'user_status': 'medic',
-            # 'user_chat_id': '400427515',
-            'time_of_departure': '21.00',
-            'date_of_departure': '20.20.3333',
-            'finish_point': {
-                'latitude': '47.8516381',
-                'longitude': '35.1303422'
-            }
-        }
-    }}
-
     # отправляем запрос на наличие совпадений -- GET
-    response = dummy_data
+    if context.user_data['ride_type'] == 'ONE_TIME':
+        response = get_similar_routes_request(telegram_id=context.user_data['telegram_id'],
+                                              time_of_departure=context.user_data['time_of_departure'],
+                                              date_of_departure=context.user_data['date_of_departure'],
+                                              start_latitude=context.user_data['start_latitude'],
+                                              start_longitude=context.user_data['start_longitude'],
+                                              finish_latitude=context.user_data["finish_latitude"],
+                                              finish_longitude=context.user_data["finish_longitude"])
+    else:
+        response = get_similar_routes_request(telegram_id=context.user_data['telegram_id'],
+                                              start_latitude=context.user_data['start_latitude'],
+                                              start_longitude=context.user_data['start_longitude'],
+                                              finish_latitude=context.user_data["finish_latitude"],
+                                              finish_longitude=context.user_data["finish_longitude"])
+
 
     # после отправки запроса перезаписываем содержимое user_data, чтобы передать их в get_details
     context.user_data.clear()
     context.user_data['response'] = response
 
-    if len(context.user_data['response']['result_list']):
-        if context.user_data['response']['result_list'][1]['user_status'] == 'medic':
+    if len(context.user_data['response']):
+        if context.user_data['response'][0]['user']['type'] == 'medic':
             keyboard = [[InlineKeyboardButton("Деталі", callback_data=str(GET_DETAILS))]]
             reply_markup = InlineKeyboardMarkup(keyboard)
             update.message.reply_text('Ми знайшли медиків поряд з місцем вашого відправлення!',

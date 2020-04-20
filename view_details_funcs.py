@@ -3,25 +3,24 @@ from telegram.ext import ConversationHandler
 
 
 def get_several_details_messages(update, context):
-    result_list = context.user_data['response']['result_list']
+    result_list = context.user_data['response']
     update.callback_query.edit_message_text('Ми знайшли медиків поряд з місцем вашого відправлення!')
 
-    context.chat_data['info'] = {'count_of_active_messages': 0}
+    for route in result_list:
+        location = Location(latitude=route['finish_point']['latitude'],
+                            longitude=route['finish_point']['longitude'])
+        contact = Contact(phone_number=route['user']['phone_number'],
+                          first_name=route['user']['first_name'],
+                          last_name=route['user']['last_name'])
 
-    for key, value in result_list.items():
-        context.chat_data['info']['count_of_active_messages'] += 1
+        if route['date_and_time']:
+            text = f'Время и дата отправления: {route["date_and_time"]}.\n' \
+                   f'Місце призначення:'
+        else:
+            text = 'Регулярная поездка.\n' \
+                   'Место назначения:'
 
-        location = Location(latitude=value['finish_point']['latitude'],
-                            longitude=value['finish_point']['longitude'])
-
-        contact = Contact(phone_number=value['user_phone_number'],
-                          first_name=value['user_first_name'],
-                          last_name=value['user_last_name'])
-
-        context.bot.send_message(update.effective_message.chat_id,
-                                 text=f'Час відправлення: {value["time_of_departure"]}.\n'
-                                      f'Дата відправлення: {value["date_of_departure"]}.\n'
-                                      f'Місце призначення:')
+        context.bot.send_message(update.effective_message.chat_id, text=text)
         context.bot.send_location(chat_id=update.effective_message.chat_id, location=location)
         context.bot.send_contact(update.effective_message.chat_id, contact=contact)
 

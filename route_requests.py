@@ -6,7 +6,7 @@ import json
 def create_datetime_object(time, date):
     str_date_and_time = f'{time} {date}'
     date_and_time = datetime.datetime.strptime(str_date_and_time, '%H.%M %d.%m.%Y')
-    return date_and_time
+    return str(date_and_time)
 
 
 def create_points(**kwargs):

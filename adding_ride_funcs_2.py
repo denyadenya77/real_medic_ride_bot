@@ -127,7 +127,10 @@ def get_db_response(update, context):
     context.user_data['response'] = response
 
     if len(context.user_data['response']):
-        if context.user_data['response'][0]['user']['type'] == 'medic':
+
+        user_type = context.user_data['response'][0]['user']['type']
+
+        if user_type == 'doctor':
             keyboard = [[InlineKeyboardButton("Деталі", callback_data=str(GET_DETAILS))]]
             reply_markup = InlineKeyboardMarkup(keyboard)
             update.message.reply_text('Ми знайшли медиків поряд з місцем вашого відправлення!',

@@ -155,8 +155,8 @@ def get_db_response(update, context):
             for route in response:
                 driver_telegram_id = route['user']['telegram_id']
 
-                location = Location(latitude=context.user_data['start_latitude'],
-                                    longitude=context.user_data['start_longitude'])
+                location = Location(latitude=context.user_data['finish_latitude'],
+                                    longitude=context.user_data['finish_longitude'])
 
                 if route['date_and_time']:
 

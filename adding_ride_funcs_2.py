@@ -124,8 +124,7 @@ def get_db_response(update, context):
                                               finish_latitude=context.user_data["finish_latitude"],
                                               finish_longitude=context.user_data["finish_longitude"])
 
-
-
+    context.user_data['response'] = response
 
     if len(context.user_data['response']):
         if context.user_data['response'][0]['user']['type'] == 'medic':

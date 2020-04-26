@@ -13,7 +13,7 @@ def get_several_details_messages(update, context):
                           first_name=route['user']['first_name'],
                           last_name=route['user']['last_name'])
 
-        if route['date_and_time']:
+        if route.get('date_and_time'):
 
             date = route['date_and_time'][:10]
             time = route['date_and_time'][11:16]

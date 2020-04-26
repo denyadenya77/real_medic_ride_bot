@@ -47,7 +47,7 @@ def create_route_request(**kwargs):
                                               finish_latitude=kwargs['finish_latitude'],
                                               finish_longitude=kwargs['finish_longitude'])
 
-    if kwargs['time_of_departure']:
+    if kwargs.get('time_of_departure'):
         date_and_time = create_datetime_object(time=kwargs['time_of_departure'],
                                                date=kwargs['date_of_departure'])
         response = create_one_time_route_request(telegram_id=kwargs['telegram_id'],
@@ -69,7 +69,7 @@ def get_similar_routes_request(**kwargs):
                                               finish_latitude=kwargs['finish_latitude'],
                                               finish_longitude=kwargs['finish_longitude'])
 
-    if kwargs['time_of_departure']:
+    if kwargs.get('time_of_departure'):
         date_and_time = create_datetime_object(time=kwargs['time_of_departure'],
                                                date=kwargs['date_of_departure'])
 

@@ -83,7 +83,7 @@ def get_similar_routes_request(**kwargs):
             'start_point': start_point})
 
     data = response.content.decode('utf-8')
-    response = json.load(data)
+    response = json.loads(data)
     return response
 
 

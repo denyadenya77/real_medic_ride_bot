@@ -4,8 +4,8 @@ import json
 
 
 def create_datetime_object(time, date):
-    str_date_and_time = f'{date}T{time}:00Z'
-    date_and_time = datetime.datetime.strptime(str_date_and_time, '%Y-%m-%dT%H:%M:%SZ')
+    str_date_and_time = f'{time} {date}'
+    date_and_time = datetime.datetime.strptime(str_date_and_time, '%H.%M %d.%m.%Y')
     return str(date_and_time)
 
 

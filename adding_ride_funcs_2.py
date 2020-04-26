@@ -20,7 +20,7 @@ def get_ride_status_and_user_id(update, context):
 
     if ride_type is ONE_TIME:
         context.user_data['ride_type'] = 'ONE_TIME'
-        text = 'Введіть час відправлення у форматі HH.MM:'
+        text = 'Введіть час відправлення у форматі HH:MM:'
     else:
         context.user_data['ride_type'] = 'REGULAR'
         text = 'Надішліть координати старту.'
@@ -38,7 +38,7 @@ def get_departure_time(update, context):
     context.user_data['time_of_departure'] = time_of_departure
 
     update.message.reply_text(f'Час вашого відправлення:{context.user_data["time_of_departure"]}\n\n'
-                              f'Будь ласка, тепер введіть дату поїздки у форматі DD.MM.YYYY')
+                              f'Будь ласка, тепер введіть дату поїздки у форматі YYYY-MM-DD')
     return GET_DEPARTURE_DATE
 
 

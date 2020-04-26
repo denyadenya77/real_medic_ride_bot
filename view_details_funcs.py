@@ -14,7 +14,11 @@ def get_several_details_messages(update, context):
                           last_name=route['user']['last_name'])
 
         if route['date_and_time']:
-            text = f'Время и дата отправления: {route["date_and_time"]}.\n' \
+
+            date = route['date_and_time'][:10]
+            time = route['date_and_time'][11:16]
+
+            text = f'Время и дата отправления: {date}, {time}.\n' \
                    f'Місце призначення:'
         else:
             text = 'Регулярная поездка.\n' \

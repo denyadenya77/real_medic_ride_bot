@@ -1,4 +1,5 @@
-from telegram.ext import ConversationHandler, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+from telegram.ext import ConversationHandler, Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, \
+    PicklePersistence
 import os
 from dotenv import load_dotenv
 from adding_ride_funcs_2 import add_ride, get_ride_status_and_user_id, get_departure_time, get_departure_date, \
@@ -12,7 +13,10 @@ load_dotenv()
 
 
 def main():
-    updater = Updater(os.getenv("BOT_TOKEN"), use_context=True)
+
+    bot_persistence = PicklePersistence(filename='persistence_file')
+
+    updater = Updater(os.getenv("BOT_TOKEN"), persistence=bot_persistence, use_context=True)
     dp = updater.dispatcher
 
     start_handler = CommandHandler('start', start)

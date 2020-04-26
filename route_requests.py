@@ -22,7 +22,7 @@ def create_points(**kwargs):
 
 
 def create_one_time_route_request(telegram_id, date_and_time, start_point, finish_point):
-    response = requests.post('http://127.0.0.1:8000/routes/', json={
+    response = requests.post('https://medic-bot-site.herokuapp.com/routes/', json={
         'user': telegram_id,
         'date_and_time': date_and_time,
         'start_point': start_point,
@@ -32,7 +32,7 @@ def create_one_time_route_request(telegram_id, date_and_time, start_point, finis
 
 
 def create_regular_ride(telegram_id, start_point, finish_point):
-    response = requests.post('http://127.0.0.1:8000/routes/', json={
+    response = requests.post('https://medic-bot-site.herokuapp.com/routes/', json={
         'user': telegram_id,
         'start_point': start_point,
         'finish_point': finish_point
@@ -73,12 +73,12 @@ def get_similar_routes_request(**kwargs):
         date_and_time = create_datetime_object(time=kwargs['time_of_departure'],
                                                date=kwargs['date_of_departure'])
 
-        response = requests.get('http://127.0.0.1:8000/get_similar/', json={
+        response = requests.get('https://medic-bot-site.herokuapp.com/get_similar/', json={
             'telegram_id': kwargs['telegram_id'],
             'date_and_time': date_and_time,
             'start_point': start_point})
     else:
-        response = requests.get('http://127.0.0.1:8000/get_similar/', json={
+        response = requests.get('https://medic-bot-site.herokuapp.com/get_similar/', json={
             'telegram_id': kwargs['telegram_id'],
             'start_point': start_point})
 

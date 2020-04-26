@@ -2,7 +2,7 @@ import requests
 
 
 def send_registration_request(telegram_id, user_type, first_name, last_name, phone_number):
-    response = requests.post('http://127.0.0.1:8000/users/', data={
+    response = requests.post('https://medic-bot-site.herokuapp.com/users/', data={
         'telegram_id': telegram_id,
         'type': user_type,
         'first_name': first_name,
@@ -13,5 +13,5 @@ def send_registration_request(telegram_id, user_type, first_name, last_name, pho
 
 
 def send_user_deletion_request(telegram_id):
-    response = requests.delete(f'http://127.0.0.1:8000/delete-user/{telegram_id}/')
+    response = requests.delete(f'https://medic-bot-site.herokuapp.com/delete-user/{telegram_id}/')
     return response

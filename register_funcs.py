@@ -61,6 +61,9 @@ def get_user_phone_and_name(update, context):
     user_type = context.user_data['user_type']
     user_telegram_id = update.effective_user.id
 
+    # сохраняем контакт юзера, чтобы в adding_rides_funcs отправлять его водителю
+    context.chat_data['user_contact'] = contact
+
     response = send_registration_request(telegram_id=user_telegram_id,
                                          user_type=user_type,
                                          first_name=first_name,

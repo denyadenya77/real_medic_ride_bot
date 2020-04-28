@@ -2,4 +2,4 @@
 .idea/*
 __pycache__/*
 my_pickle_storage
-
+persistence_file

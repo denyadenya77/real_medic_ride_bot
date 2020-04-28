@@ -6,7 +6,7 @@ from registration_requests import send_registration_request, send_user_deletion_
 
 
 def register(update, context):
-    if not len(context.chat_data) or not context.chat_data['authorized']:
+    if not len(context.chat_data) or not context.chat_data.get('authorized'):
         text = 'Оберіть тип профілю:'
         buttons = [[
             InlineKeyboardButton(text='Водій-волонтер', callback_data=str(DRIVER)),

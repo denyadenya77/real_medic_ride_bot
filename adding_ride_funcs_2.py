@@ -161,7 +161,7 @@ def get_db_response(update, context):
                 location = Location(latitude=context.user_data['finish_latitude'],
                                     longitude=context.user_data['finish_longitude'])
 
-                if route['date_and_time']:
+                if route.get('date_and_time'):
 
                     date = route['date_and_time'][:10]
                     time = route['date_and_time'][11:16]

@@ -2,7 +2,7 @@ import requests
 
 
 def get_user(telegram_id):
-    response = requests.get('https://medic-bot-site.herokuapp.com/users/', data={
+    response = requests.get('https://medic-bot-site.herokuapp.com/users/_/', data={
         'telegram_id': telegram_id
     })
     return response

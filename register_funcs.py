@@ -8,10 +8,18 @@ import json
 
 def register(update, context):
     response = get_user(update.effective_user.id)
-    data = response.content.decode('utf-8')
-    user_instance = json.loads(data)
+    # response = response.content.decode('utf-8')
 
-    if len(user_instance):
+    if response.status_code == 500:
+        text = 'Оберіть тип профілю:'
+        buttons = [[
+            InlineKeyboardButton(text='Водій-волонтер', callback_data=str(DRIVER)),
+            InlineKeyboardButton(text='Мед. працівник', callback_data=str(DOCTOR))
+        ]]
+        keyboard = InlineKeyboardMarkup(buttons)
+        update.message.reply_text(text=text, reply_markup=keyboard)
+        return GET_USER_STATUS
+    else:
         text = 'Ви вже авторизовані в системі!\n\n' \
                'Натисніть "ВИДАЛИТИ", якщо хочете видалити всю інформацію про себе та свої маршрути.\n' \
                'Натисніть "ВІДМІНИТИ", щоб відмінити дію.\n\n' \
@@ -23,15 +31,6 @@ def register(update, context):
         keyboard = InlineKeyboardMarkup(buttons)
         update.message.reply_text(text=text, reply_markup=keyboard)
         return CHOSE_DELETE_USER_DATA
-    else:
-        text = 'Оберіть тип профілю:'
-        buttons = [[
-            InlineKeyboardButton(text='Водій-волонтер', callback_data=str(DRIVER)),
-            InlineKeyboardButton(text='Мед. працівник', callback_data=str(DOCTOR))
-        ]]
-        keyboard = InlineKeyboardMarkup(buttons)
-        update.message.reply_text(text=text, reply_markup=keyboard)
-        return GET_USER_STATUS
 
 
 

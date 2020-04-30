@@ -1,7 +1,10 @@
+import json
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Location, Contact
 from telegram.ext import ConversationHandler
 from vars_module import *
 from route_requests import create_route_request, get_similar_routes_request
+from registration_requests import get_user
 
 
 def add_ride(update, context):
@@ -157,9 +160,17 @@ def get_db_response(update, context):
             # рассылка уведомлений водителям
             for route in response:
                 driver_telegram_id = route['user']['telegram_id']
+                medic_user_instance = get_user(update.effective_user.id)
+                data = medic_user_instance.content.decode('utf-8')
+                user_instance = json.loads(data)
 
                 location = Location(latitude=context.user_data['finish_latitude'],
                                     longitude=context.user_data['finish_longitude'])
+
+                user_contact = Contact(phone_number=user_instance['phone_number'],
+                                       first_name=user_instance['first_name'],
+                                       last_name=user_instance['last_name'],
+                                       user_id=user_instance['telegram_id'])
 
                 if context.user_data.get('time_of_departure'):
                     date = context.user_data['date_of_departure']
@@ -174,7 +185,7 @@ def get_db_response(update, context):
 
                 context.bot.send_message(chat_id=driver_telegram_id, text=text)
                 context.bot.send_location(chat_id=driver_telegram_id, location=location)
-                context.bot.send_contact(chat_id=driver_telegram_id, contact=context.chat_data['user_contact'])
+                context.bot.send_contact(chat_id=driver_telegram_id, contact=user_contact)
 
                 context.bot.send_message(chat_id=driver_telegram_id,
                                          text="Перегляньте місця призначення. Якщо вам по дорозі, "

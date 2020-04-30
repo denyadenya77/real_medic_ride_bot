@@ -2,20 +2,12 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
     ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 from vars_module import *
-from registration_requests import send_registration_request, send_user_deletion_request
+from registration_requests import send_registration_request, send_user_deletion_request, get_user
 
 
 def register(update, context):
-    if not len(context.chat_data) or not context.chat_data.get('authorized'):
-        text = 'Оберіть тип профілю:'
-        buttons = [[
-            InlineKeyboardButton(text='Водій-волонтер', callback_data=str(DRIVER)),
-            InlineKeyboardButton(text='Мед. працівник', callback_data=str(DOCTOR))
-        ]]
-        keyboard = InlineKeyboardMarkup(buttons)
-        update.message.reply_text(text=text, reply_markup=keyboard)
-        return GET_USER_STATUS
-    else:
+    response = get_user(update.effective_user.id)
+    if response.status_code == 200:
         text = 'Ви вже авторизовані в системі!\n\n' \
                'Натисніть "ВИДАЛИТИ", якщо хочете видалити всю інформацію про себе та свої маршрути.\n' \
                'Натисніть "ВІДМІНИТИ", щоб відмінити дію.\n\n' \
@@ -27,6 +19,16 @@ def register(update, context):
         keyboard = InlineKeyboardMarkup(buttons)
         update.message.reply_text(text=text, reply_markup=keyboard)
         return CHOSE_DELETE_USER_DATA
+    else:
+        text = 'Оберіть тип профілю:'
+        buttons = [[
+            InlineKeyboardButton(text='Водій-волонтер', callback_data=str(DRIVER)),
+            InlineKeyboardButton(text='Мед. працівник', callback_data=str(DOCTOR))
+        ]]
+        keyboard = InlineKeyboardMarkup(buttons)
+        update.message.reply_text(text=text, reply_markup=keyboard)
+        return GET_USER_STATUS
+
 
 
 def get_user_status(update, context):
@@ -62,7 +64,7 @@ def get_user_phone_and_name(update, context):
     user_telegram_id = update.effective_user.id
 
     # сохраняем контакт юзера, чтобы в adding_rides_funcs отправлять его водителю
-    context.chat_data['user_contact'] = contact
+    # context.chat_data['user_contact'] = contact
 
     response = send_registration_request(telegram_id=user_telegram_id,
                                          user_type=user_type,

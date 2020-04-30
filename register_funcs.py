@@ -3,11 +3,15 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton,
 from telegram.ext import ConversationHandler
 from vars_module import *
 from registration_requests import send_registration_request, send_user_deletion_request, get_user
+import json
 
 
 def register(update, context):
     response = get_user(update.effective_user.id)
-    if response.status_code == 200:
+    data = response.content.decode('utf-8')
+    user_instance = json.loads(data)
+
+    if len(user_instance):
         text = 'Ви вже авторизовані в системі!\n\n' \
                'Натисніть "ВИДАЛИТИ", якщо хочете видалити всю інформацію про себе та свої маршрути.\n' \
                'Натисніть "ВІДМІНИТИ", щоб відмінити дію.\n\n' \

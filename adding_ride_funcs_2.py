@@ -28,7 +28,7 @@ def get_ride_status_and_user_id(update, context):
         context.user_data['ride_type'] = 'REGULAR'
         text = 'Надішліть координати старту.'
 
-    update.effective_message.reply_text(f'Тип вашої поїздки: {context.user_data["ride_type"]}\n\n{text}')
+    update.callback_query.edit_message_text(f'Тип вашої поїздки: {context.user_data["ride_type"]}\n\n{text}')
 
     if ride_type is ONE_TIME:
         return GET_DEPARTURE_TIME
@@ -64,7 +64,7 @@ def get_ride_type_or_start_point(update, context):
         else:
             context.user_data['ride_type'] = 'REGULAR'
         text = f'Тип вашої поїздки: {context.user_data["ride_type"]}'
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=text)
+        update.callback_query.edit_message_text(chat_id=update.effective_message.chat_id, text=text)
     else:
         location = update.message.location
         latitude, longitude = location.latitude, location.longitude

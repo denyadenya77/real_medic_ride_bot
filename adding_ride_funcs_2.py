@@ -50,7 +50,7 @@ def get_departure_date(update, context):
     context.user_data['date_of_departure'] = date_of_departure
 
     update.message.reply_text(f'Дата вашого відправлення: {context.user_data["date_of_departure"]}.\n\n'
-                              f'Тепер локацію місця вашого відправлення:')
+                              f'Тепер надішліть нам локацію місця вашого відправлення:')
     return GET_START_POINT
 
 
@@ -102,9 +102,11 @@ def get_finish_point_and_send_requests(update, context):
                                         finish_longitude=context.user_data["finish_longitude"])
 
     if response.status_code == 201:
-        update.effective_message.reply_text('Маршрут успешно добален в базу данных.')
+        update.effective_message.reply_text('Маршрут успішно додано до бази даних!')
     else:
-        update.effective_message.reply_text('Произошла ошибка. Попробуйте внести маршрут в базу позже.')
+        update.effective_message.reply_text('Сталася якась помилка. Будь ласка, спробуйте пізніше. Також будьте '
+                                            'уважні прі вводі часу та дати. Система сприймає дані лише у зазначеному'
+                                            'форматі.')
 
     return get_db_response(update, context)
 
@@ -142,9 +144,9 @@ def get_db_response(update, context):
             for route in response:
                 medic_telegram_id = route['user']['telegram_id']
                 context.bot.send_message(chat_id=medic_telegram_id,
-                                         text='Рядом с местом вашего отправления нашелся новый водитель.'
-                                              'Мы отправили им ваши данные. Ожидайте, возможно скоро он с вами '
-                                              'свяжется!')
+                                         text="Поряд з місцем вашого відправлення знайшлися водії!\n"
+                                              "Ми відправили їм ваши контакти, та інформацію про ваш маршрут.\n"
+                                              "Можливо скоро з вами зв'яжуться!")
 
             # после отправки запроса перезаписываем содержимое user_data, чтобы передать их в get_details
             context.user_data.clear()
@@ -175,13 +177,13 @@ def get_db_response(update, context):
                 if context.user_data.get('time_of_departure'):
                     date = context.user_data['date_of_departure']
                     time = context.user_data['time_of_departure']
-                    text = f'Мы нашли новое совпадение по маршруту!\n' \
-                           f'Время и дата отправления: {date}, {time}.\n' \
+                    text = f'Ми знайшли нове співпадіння за маршрутом!\n' \
+                           f'Час та дата відправлення: {date}, {time}.\n' \
                            f'Місце призначення:'
                 else:
-                    text = 'Мы нашли новое совпадение по маршруту!\n' \
-                           'Регулярная поездка.\n' \
-                           'Место назначения:'
+                    text = 'Ми знайшли нове співпадіння за маршрутом!\n' \
+                           'Регулярна поїздка.\n' \
+                           'Місце призначення:'
 
                 context.bot.send_message(chat_id=driver_telegram_id, text=text)
                 context.bot.send_location(chat_id=driver_telegram_id, location=location)
@@ -195,7 +197,7 @@ def get_db_response(update, context):
                 context.user_data.clear()
             return ConversationHandler.END
     else:
-        update.message.reply_text('Наразі у систумі немає ваших попутників. Ми повідомимо, коли такі знайдуться.')
+        update.message.reply_text('Наразі у систумі немає Ваших попутників. Ми повідомимо, коли такі знайдуться.')
         context.user_data.clear()
         return ConversationHandler.END
 

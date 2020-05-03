@@ -11,7 +11,7 @@ def register(update, context):
     # response = response.content.decode('utf-8')
 
     if response.status_code == 500:
-        text = 'Оберіть тип профілю:'
+        text = 'Дякуємо за вашу рішучість! Будь лакска, оберіть тип Вашого профілю:'
         buttons = [[
             InlineKeyboardButton(text='Водій-волонтер', callback_data=str(DRIVER)),
             InlineKeyboardButton(text='Мед. працівник', callback_data=str(DOCTOR))
@@ -23,7 +23,7 @@ def register(update, context):
         text = 'Ви вже авторизовані в системі!\n\n' \
                'Натисніть "ВИДАЛИТИ", якщо хочете видалити всю інформацію про себе та свої маршрути.\n' \
                'Натисніть "ВІДМІНИТИ", щоб відмінити дію.\n\n' \
-               'БУДЬТЕ ОБЕРЕЖНІ! Видалееі дані неможливо відновити!'
+               'БУДЬТЕ ОБЕРЕЖНІ! Видалені дані неможливо відновити!'
         buttons = [[
             InlineKeyboardButton(text='ВИДАЛИТИ', callback_data=str(DELETE_DATA)),
             InlineKeyboardButton(text='ВІДМІНИТИ', callback_data=str(STOP_ACTION))
@@ -39,12 +39,13 @@ def get_user_status(update, context):
 
     if user_type is DRIVER:
         user_type = 'driver'
+        text = 'Тепер ви наш водій!'
     else:
         user_type = 'doctor'
+        text = 'Тепер ви наш медик!'
 
     context.user_data['user_type'] = user_type
 
-    text = f'Тепер ви наш {user_type}!'
     update.callback_query.answer()
     update.callback_query.edit_message_text(text)
 
@@ -80,7 +81,7 @@ def get_user_phone_and_name(update, context):
         update.effective_message.reply_text(f'Вітаємо! Тепер ви зарєєстровні у системі!',
                                             reply_markup=ReplyKeyboardRemove())
     else:
-        update.effective_message.reply_text('Случилась какая-то ошибка. Попробуйте еще раз.',
+        update.effective_message.reply_text('Сталася якась помилка. Будь ласка, спробуйте пізніше.',
                                             reply_markup=ReplyKeyboardRemove())
     context.user_data.clear()
     return ConversationHandler.END
@@ -95,12 +96,12 @@ def delete_or_stop(update, context):
 
         if response.status_code == 200:
             text = 'Ваші дані видалено з системи.\n' \
-                   'Ви можете зареєстнуватися знову обрав команду /register'
+                   'Ви можете зареєструватися знову обрав команду /register'
             context.chat_data['authorized'] = False
         else:
-            text = 'Случилась какая-то ошибка. Попробуйте еще раз.'
+            text = 'Сталася якась помилка. Будь ласка, спробуйте пізніше.'
     else:
-        text = 'Дякуємо, що залилаєтесь з нами!'
+        text = 'Дякуємо, що залишаєтесь з нами!'
 
     update.callback_query.answer()
     update.callback_query.edit_message_text(text)

@@ -18,11 +18,11 @@ def get_several_details_messages(update, context):
             date = route['date_and_time'][:10]
             time = route['date_and_time'][11:16]
 
-            text = f'Время и дата отправления: {date}, {time}.\n' \
+            text = f'Час та дата відправлення: {date}, {time}.\n' \
                    f'Місце призначення:'
         else:
-            text = 'Регулярная поездка.\n' \
-                   'Место назначения:'
+            text = 'Регулярна поїздка.\n' \
+                   'Місце призначення:'
 
         context.bot.send_message(update.effective_message.chat_id, text=text)
         context.bot.send_location(chat_id=update.effective_message.chat_id, location=location)

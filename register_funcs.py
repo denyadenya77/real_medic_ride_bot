@@ -94,7 +94,7 @@ def delete_or_stop(update, context):
 
         response = send_user_deletion_request(telegram_id=update.effective_user.id)
 
-        if response.status_code == 200:
+        if response.status_code == 204:
             text = 'Ваші дані видалено з системи.\n' \
                    'Ви можете зареєструватися знову обрав команду /register'
             context.chat_data['authorized'] = False
